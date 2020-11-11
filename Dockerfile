@@ -36,9 +36,7 @@ RUN apk add --no-cache runit \
  && ln -s websockify-* websockify \
  \
  && chown app -R /websockify* \
- && chown app -R /no* \
- \
- && sed -i '0,/<item/ s,,<item label="App"><action name="Execute"><execute>app</execute></action></item>\n<item,' /etc/xdg/openbox/menu.xml
+ && chown app -R /no*
 
 VOLUME ["/certs"]
 
