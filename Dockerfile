@@ -9,7 +9,6 @@ RUN apk add --no-cache runit \
                        x11vnc \
                        openbox \
                        ttf-dejavu \
-                       xrandr \
                        \
                        haproxy \
                        openssl \
