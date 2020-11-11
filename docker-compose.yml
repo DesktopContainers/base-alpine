@@ -1,0 +1,19 @@
+version: '3'
+ 
+services:
+  desktop-base:
+    build: .
+    image: desktopcontainers/base-alpine
+    restart: always
+    environment:
+      SERVER_NAME: localhost
+
+      #ENABLE_SUDO: enable
+      #ENABLE_KIOSK: enable
+    volumes:
+      - ./certs:/certs
+    ports:
+      - "2222:22"
+      - "8081:80"
+      - "4441:443"
+      - "5901:5900"

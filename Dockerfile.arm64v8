@@ -1,0 +1,60 @@
+FROM alpine AS builder
+
+# Download QEMU, see https://github.com/docker/hub-feedback/issues/1261
+ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-aarch64.tar.gz
+RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
+
+FROM arm64v8/alpine
+# alpine:3.12
+
+COPY --from=builder qemu-arm-static /usr/bin
+
+ENV PATH="/container/scripts:${PATH}"
+
+RUN apk add --no-cache runit \
+                       \
+                       xvfb \
+                       x11vnc \
+                       openbox \
+                       ttf-dejavu \
+                       xrandr \
+                       \
+                       haproxy \
+                       openssl \
+                       openssh-server \
+                       sudo \
+                       \
+                       python3 \
+                       py3-numpy \
+                       sed \
+ \
+ && ln -s /usr/bin/python3 /usr/bin/python \
+ \
+ && adduser -D app \
+ && passwd -d app \
+ \
+ && wget -O novnc.tar.gz https://github.com/novnc/noVNC/archive/v1.2.0.tar.gz \
+ && tar xvf novnc.tar.gz \
+ && ln -s noVNC-* novnc \
+ \
+ && ln -s /novnc/vnc_lite.html /novnc/index.html \
+ \
+ && wget -O websockify.tar.gz https://github.com/novnc/websockify/archive/v0.9.0.tar.gz \
+ && tar xvf websockify.tar.gz \
+ && ln -s websockify-* websockify \
+ \
+ && chown app -R /websockify* \
+ && chown app -R /no* \
+ \
+ && sed -i '0,/<item/ s,,<item label="App"><action name="Execute"><execute>app</execute></action></item>\n<item,' /etc/xdg/openbox/menu.xml
+
+VOLUME ["/certs"]
+
+EXPOSE 22 80 443 5900
+
+COPY . /container/
+
+HEALTHCHECK CMD ["docker-healthcheck.sh"]
+ENTRYPOINT ["entrypoint.sh"]
+
+CMD [ "runsvdir","-P", "/container/config/runit" ]
