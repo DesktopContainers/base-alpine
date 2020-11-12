@@ -12,6 +12,8 @@ It is based on `_/alpine` and comes with various way to use your X11 application
 
 ## Changelogs
 
+* 2020-11-12
+    * default `VNC_SCREEN_DEPTH` to `24`
 * 2020-11-10
     * added kiosk mode
     * `VNC_SCREEN_DEPTH` support
@@ -41,7 +43,7 @@ It is based on `_/alpine` and comes with various way to use your X11 application
 
 * __VNC\_SCREEN\_DEPTH__
     * set the screen depth for the xfvb x-server
-    * default: `8`
+    * default: `24`
     * other possible values:
         * 8
         * 16
